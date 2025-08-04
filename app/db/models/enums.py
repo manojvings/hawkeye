@@ -1,4 +1,6 @@
+# app/db/models/enums.py
 import enum
+
 
 class Severity(str, enum.Enum):
     LOW = "low"
@@ -6,11 +8,13 @@ class Severity(str, enum.Enum):
     HIGH = "high"
     CRITICAL = "critical"
 
+
 class TLP(str, enum.Enum):
     WHITE = "white"
     GREEN = "green"
     AMBER = "amber"
     RED = "red"
+
 
 class CaseStatus(str, enum.Enum):
     OPEN = "open"
@@ -18,11 +22,13 @@ class CaseStatus(str, enum.Enum):
     RESOLVED = "resolved"
     CLOSED = "closed"
 
+
 class TaskStatus(str, enum.Enum):
     PENDING = "pending"
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
     CANCELLED = "cancelled"
+
 
 class AlertStatus(str, enum.Enum):
     NEW = "new"
@@ -30,11 +36,13 @@ class AlertStatus(str, enum.Enum):
     IGNORED = "ignored"
     IMPORTED = "imported"
 
+
 class UserRole(str, enum.Enum):
     ADMIN = "admin"
     ORG_ADMIN = "org_admin"
     ANALYST = "analyst"
     READ_ONLY = "read_only"
+
 
 class ObservableType(str, enum.Enum):
     DOMAIN = "domain"

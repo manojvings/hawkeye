@@ -18,7 +18,7 @@ class PaginationParams(BaseModel):
     page: int = Field(1, ge=1, description="Page number (1-indexed)")
     size: int = Field(20, ge=1, le=100, description="Items per page")
     sort_by: Optional[str] = Field(None, description="Field to sort by")
-    sort_order: str = Field("asc", regex="^(asc|desc)$", description="Sort order")
+    sort_order: str = Field("asc", pattern="^(asc|desc)$", description="Sort order")
     search: Optional[str] = Field(None, description="Search term")
 
     @computed_field

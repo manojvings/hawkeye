@@ -1,6 +1,6 @@
 # In app/db/models/api_key.py, update the model to add UUID:
 
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON, func
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from app.db.database import Base
@@ -16,6 +16,6 @@ class APIKey(Base):
     is_active = Column(Boolean, default=True, nullable=False)
     permissions = Column(JSON, default=list)
     rate_limit_override = Column(Integer, nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default='CURRENT_TIMESTAMP')
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
     last_used_at = Column(DateTime(timezone=True), nullable=True)
     expires_at = Column(DateTime(timezone=True), nullable=True)

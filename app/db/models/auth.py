@@ -61,17 +61,18 @@ class RefreshToken(Base, TimestampMixin):
 
 
 class BlacklistedToken(Base):
+    """Blacklisted JWT tokens with UUID"""
     __tablename__ = "blacklisted_tokens"
 
     id = Column(Integer, primary_key=True, index=True)
-    uuid = Column(UUID(as_uuid=True), unique=True, default=uuid.uuid4, index=True, nullable=False)  # ADD THIS LINE
+    uuid = Column(UUID(as_uuid=True), unique=True, default=uuid.uuid4, index=True, nullable=False)
     jti = Column(String(255), unique=True, nullable=False, index=True)
     expires_at = Column(DateTime(timezone=True), nullable=False)
     blacklisted_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # Enhanced indexes for cleanup and lookup performance
     __table_args__ = (
-        Index('idx_blacklisted_uuid', 'uuid'),  # ADD THIS LINE
+        Index('idx_blacklisted_uuid', 'uuid'),
         Index('idx_blacklisted_jti_expires', 'jti', 'expires_at'),
         Index('idx_blacklisted_expires', 'expires_at'),
         Index('idx_blacklisted_cleanup', 'expires_at', 'blacklisted_at'),
