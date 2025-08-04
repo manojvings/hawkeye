@@ -150,3 +150,19 @@ async def search_users_by_email(db: AsyncSession, email_pattern: str, limit: int
     except Exception as e:
         logger.error(f"Error searching users: {e}")
         return []
+
+
+async def is_user_in_organization(db: AsyncSession, user_id: int, organization_id: int) -> bool:
+    """Check if a user belongs to a specific organization"""
+    try:
+        from app.db.models import UserOrganization
+        result = await db.execute(
+            select(UserOrganization).filter(
+                UserOrganization.user_id == user_id,
+                UserOrganization.organization_id == organization_id
+            )
+        )
+        return result.scalars().first() is not None
+    except Exception as e:
+        logger.error(f"Error checking user organization membership: {e}")
+        return False
