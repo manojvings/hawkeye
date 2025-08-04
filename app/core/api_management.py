@@ -3,22 +3,18 @@
 Base API management system for all endpoints
 Provides rate limiting, API key auth, and permissions as a base layer
 """
-from typing import Optional, Dict, Any, List, Callable
+from typing import Optional, List
 from functools import wraps
-from fastapi import Depends, HTTPException, status, Request
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials, APIKeyHeader
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer, APIKeyHeader
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON
 from datetime import datetime, timezone
 import secrets
-
-from app.db.database import get_db, Base
+from app.db.database import get_db
 from app.core import tracing
-from app.core.config import settings
-from sqlalchemy.dialects.postgresql import UUID
-import uuid
+from app.db.models import APIKey
 
 # Global rate limiter instance
 rate_limiter = Limiter(
