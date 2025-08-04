@@ -74,3 +74,49 @@ class ObservableType(str, enum.Enum):
     URI_PATH = "uri_path"
     URL = "url"
     USER_AGENT = "user-agent"
+
+
+class JobStatus(str, enum.Enum):
+    """Cortex job status"""
+    WAITING = "Waiting"
+    IN_PROGRESS = "InProgress"
+    SUCCESS = "Success"
+    FAILURE = "Failure"
+    DELETED = "Deleted"
+
+
+class WorkerType(str, enum.Enum):
+    """Cortex worker type"""
+    ANALYZER = "analyzer"
+    RESPONDER = "responder"
+
+
+class WebhookEvent(str, enum.Enum):
+    """Webhook event types"""
+    CASE_CREATED = "case.created"
+    CASE_UPDATED = "case.updated"
+    CASE_CLOSED = "case.closed"
+    CASE_DELETED = "case.deleted"
+    TASK_CREATED = "task.created"
+    TASK_UPDATED = "task.updated"
+    TASK_COMPLETED = "task.completed"
+    TASK_DELETED = "task.deleted"
+    OBSERVABLE_CREATED = "observable.created"
+    OBSERVABLE_UPDATED = "observable.updated"
+    OBSERVABLE_DELETED = "observable.deleted"
+    ALERT_CREATED = "alert.created"
+    ALERT_UPDATED = "alert.updated"
+    ALERT_IMPORTED = "alert.imported"
+    ALERT_IGNORED = "alert.ignored"
+    CORTEX_JOB_COMPLETED = "cortex.job.completed"
+    CORTEX_JOB_FAILED = "cortex.job.failed"
+
+
+class WebhookStatus(str, enum.Enum):
+    """Webhook delivery status"""
+    PENDING = "pending"
+    SENDING = "sending"
+    SUCCESS = "success"
+    FAILED = "failed"
+    RETRYING = "retrying"
+    ABANDONED = "abandoned"

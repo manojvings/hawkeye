@@ -21,6 +21,7 @@ class Organization(Base, UUIDMixin, TimestampMixin):
     members = relationship("UserOrganization", back_populates="organization", cascade="all, delete-orphan")
     cases = relationship("Case", back_populates="organization", cascade="all, delete-orphan")
     alerts = relationship("Alert", back_populates="organization", cascade="all, delete-orphan")
+    case_templates = relationship("CaseTemplate", back_populates="organization", cascade="all, delete-orphan")
 
     __table_args__ = (
         Index('idx_org_name_active', 'name', 'is_active'),

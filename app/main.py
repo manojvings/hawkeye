@@ -20,7 +20,7 @@ from app.core import tracing
 
 # Import API routes
 from app.api.v1.endpoints import auth, users
-from app.api.v1.endpoints import organizations
+from app.api.v1.endpoints import organizations, cases, tasks, observables, alerts
 
 # Import middleware
 from app.middleware.security import SecurityHeadersMiddleware
@@ -190,6 +190,10 @@ instrumentator.instrument(app).expose(app, endpoint="/metrics", include_in_schem
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/api/v1/users", tags=["Users"])
 app.include_router(organizations.router, prefix="/api/v1/organizations", tags=["Organizations"])
+app.include_router(cases.router, prefix="/api/v1/cases", tags=["Cases"])
+app.include_router(tasks.router, prefix="/api/v1/tasks", tags=["Tasks"])
+app.include_router(observables.router, prefix="/api/v1/observables", tags=["Observables"])
+app.include_router(alerts.router, prefix="/api/v1/alerts", tags=["Alerts"])
 
 tracing.info("API routes configured")
 

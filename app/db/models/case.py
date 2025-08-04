@@ -27,17 +27,19 @@ class Case(Base, UUIDMixin, TimestampMixin):
     summary = Column(Text, nullable=True)  # Case closure summary
     impact_status = Column(Enum(ImpactStatus), nullable=True)  # Impact assessment
     resolution_status = Column(Enum(ResolutionStatus), nullable=True)  # Resolution classification
-    case_template = Column(String(100), nullable=True)  # Template used for case creation
+    case_template = Column(String(100), nullable=True)  # Template name (for backward compatibility)
 
     # Foreign keys
     organization_id = Column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False)
     assignee_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     created_by_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=False)
+    case_template_id = Column(Integer, ForeignKey("case_templates.id", ondelete="SET NULL"), nullable=True)  # Template reference
 
     # Relationships
     organization = relationship("Organization", back_populates="cases")
     assignee = relationship("User", foreign_keys=[assignee_id], backref="assigned_cases")
     created_by = relationship("User", foreign_keys=[created_by_id], backref="created_cases")
+    template = relationship("CaseTemplate", back_populates="cases", foreign_keys=[case_template_id])
     tasks = relationship("Task", back_populates="case", cascade="all, delete-orphan")
     observables = relationship("Observable", back_populates="case", cascade="all, delete-orphan")
     alert = relationship("Alert", back_populates="case", uselist=False)
