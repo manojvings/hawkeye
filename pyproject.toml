@@ -1,0 +1,80 @@
+[tool.poetry]
+name = "chawk-api"
+version = "0.1.0"
+description = "A highly asynchronous, secure, and scalable REST API for selective endpoints, part of the Chawk project."
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "app"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"  # Updated to Python 3.12 as requested
+fastapi = "^0.104.1"
+uvicorn = {extras = ["standard"], version = "^0.24.0"}
+sqlalchemy = "^2.0.23"
+asyncpg = "^0.29.0"
+pydantic = "^2.5.0"
+pydantic-settings = "^2.1.0"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-multipart = "^0.0.6"
+python-dotenv = "^1.0.0"
+loguru = "^0.7.2"
+httpx = "^0.25.2"
+alembic = "^1.12.1"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+email-validator = "^2.1.0"
+# New dependencies for enhanced features
+slowapi = "^0.1.9"
+prometheus-client = "^0.19.0"
+prometheus-fastapi-instrumentator = "^6.1.0"
+opentelemetry-api = "^1.21.0"
+opentelemetry-sdk = "^1.21.0"
+opentelemetry-exporter-otlp = "^1.21.0"
+opentelemetry-instrumentation-fastapi = "^0.42b0"
+opentelemetry-instrumentation-sqlalchemy = "^0.42b0"
+opentelemetry-instrumentation-logging = "^0.42b0"
+
+[tool.poetry.group.dev.dependencies]
+# Fixed pytest version to be compatible with pytest-httpx
+pytest = "^7.4.0"  # Changed from ^8.2.0 to ^7.4.0 for compatibility
+pytest-asyncio = "^0.21.0"  # Updated to compatible version
+pytest-httpx = "^0.26.0"
+httpx = "^0.25.2"  # For testing HTTP requests
+black = "^23.12.0"
+isort = "^5.13.0"
+ruff = "^0.1.8"
+pre-commit = "^3.6.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+# Ruff Configuration
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+select = ["E", "F", "W", "I", "N", "D", "UP", "B", "C", "S", "G"]
+ignore = ["D100", "D104", "D107"]
+fix = true
+
+# Black Configuration
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+
+# Isort Configuration
+[tool.isort]
+profile = "black"
+line_length = 88
+
+# Pytest Configuration
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short --strict-markers"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+]

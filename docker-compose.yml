@@ -1,0 +1,84 @@
+# docker-compose.yml - Minimal Production Configuration
+# For external DB, no Redis, existing Prometheus
+
+version: '3.8'
+
+services:
+  chawk-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      # Core application settings
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - ALGORITHM=${ALGORITHM:-HS256}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      - REFRESH_TOKEN_EXPIRE_DAYS=${REFRESH_TOKEN_EXPIRE_DAYS:-7}
+
+      # Security settings
+      - CORS_ORIGINS=${CORS_ORIGINS:-https://yourdomain.com}
+      - RATE_LIMIT_ENABLED=${RATE_LIMIT_ENABLED:-true}
+      - DEFAULT_RATE_LIMIT=${DEFAULT_RATE_LIMIT:-100/minute}
+      - LOGIN_RATE_LIMIT=${LOGIN_RATE_LIMIT:-5/minute}
+
+      # Monitoring settings (for your existing Prometheus)
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - ENABLE_OTEL_EXPORTER=${ENABLE_OTEL_EXPORTER:-false}
+      - METRICS_ENABLED=${METRICS_ENABLED:-true}
+
+      # Environment
+      - ENVIRONMENT=production
+      - DB_POOL_SIZE=${DB_POOL_SIZE:-20}
+      - DB_MAX_OVERFLOW=${DB_MAX_OVERFLOW:-0}
+
+    volumes:
+      # Minimal volume mounts
+      - app_logs:/app/logs:rw
+
+    restart: unless-stopped
+
+    # Health monitoring
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    # Resource limits for production
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+    # Security constraints
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+
+    # Custom network for isolation
+    networks:
+      - chawk_network
+
+# Minimal volumes
+volumes:
+  app_logs:
+    driver: local
+
+# Secure network
+networks:
+  chawk_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
