@@ -17,17 +17,32 @@ class TLP(str, enum.Enum):
 
 
 class CaseStatus(str, enum.Enum):
-    OPEN = "open"
-    IN_PROGRESS = "in_progress"
-    RESOLVED = "resolved"
-    CLOSED = "closed"
+    OPEN = "Open"
+    RESOLVED = "Resolved"
+    DUPLICATED = "Duplicated"
+
+
+class ResolutionStatus(str, enum.Enum):
+    """Case resolution status matching TheHive 4.1.24"""
+    INDETERMINATE = "Indeterminate"
+    FALSE_POSITIVE = "FalsePositive"
+    TRUE_POSITIVE = "TruePositive"
+    OTHER = "Other"
+    DUPLICATED = "Duplicated"
+
+
+class ImpactStatus(str, enum.Enum):
+    """Case impact status matching TheHive 4.1.24"""
+    NO_IMPACT = "NoImpact"
+    WITH_IMPACT = "WithImpact"
+    NOT_APPLICABLE = "NotApplicable"
 
 
 class TaskStatus(str, enum.Enum):
-    PENDING = "pending"
-    IN_PROGRESS = "in_progress"
-    COMPLETED = "completed"
-    CANCELLED = "cancelled"
+    WAITING = "Waiting"
+    IN_PROGRESS = "InProgress"
+    COMPLETED = "Completed"
+    CANCEL = "Cancel"
 
 
 class AlertStatus(str, enum.Enum):

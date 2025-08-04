@@ -7,7 +7,8 @@ from typing import Optional, List, Dict, Any
 from uuid import UUID
 from loguru import logger
 
-from app.db.models import Observable, Case, User, ObservableType, TLP
+from app.db.models import Observable, Case, User
+from app.db.models.enums import ObservableType, TLP
 from app.api.v1.schemas.observables import ObservableCreate, ObservableUpdate
 
 
@@ -147,6 +148,8 @@ async def create_observable(
             tags=observable_data.tags or [],
             source=observable_data.source,
             message=observable_data.message,
+            sighted=observable_data.sighted,
+            ignore_similarity=observable_data.ignore_similarity,
             case_id=case_id,
             created_by_id=creator_id
         )

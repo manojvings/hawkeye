@@ -6,10 +6,10 @@ from enum import Enum
 
 
 class TaskStatus(str, Enum):
-    PENDING = "pending"
-    IN_PROGRESS = "in_progress"
-    COMPLETED = "completed"
-    CANCELLED = "cancelled"
+    WAITING = "Waiting"
+    IN_PROGRESS = "InProgress"
+    COMPLETED = "Completed"
+    CANCEL = "Cancel"
 
 
 class TaskBase(BaseModel):
@@ -18,6 +18,7 @@ class TaskBase(BaseModel):
     description: Optional[str] = Field(None, description="Task description")
     due_date: Optional[datetime] = Field(None, description="Due date for the task")
     order_index: Optional[int] = Field(None, description="Order index within the case")
+    group: str = Field("default", max_length=100, description="Task group for organization")
 
 
 class TaskCreate(TaskBase):
@@ -32,6 +33,7 @@ class TaskUpdate(BaseModel):
     status: Optional[TaskStatus] = None
     due_date: Optional[datetime] = None
     order_index: Optional[int] = None
+    group: Optional[str] = Field(None, max_length=100)
     assignee_email: Optional[str] = Field(None, description="Email of user to assign (null to unassign)")
 
 
@@ -60,6 +62,7 @@ class TaskResponse(TaskBase):
             status=task.status.value,
             due_date=task.due_date,
             order_index=task.order_index,
+            group=task.group,
             case_id=task.case.uuid,
             case_title=task.case.title,
             case_number=task.case.case_number,

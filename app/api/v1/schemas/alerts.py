@@ -44,12 +44,20 @@ class AlertObservable(BaseModel):
 
 class AlertBase(BaseModel):
     """Base schema for alert"""
+    type: str = Field(..., min_length=1, max_length=100, description="Alert type")
     title: str = Field(..., min_length=1, max_length=500, description="Alert title")
     description: Optional[str] = Field(None, description="Alert description")
     source: str = Field(..., min_length=1, max_length=255, description="Source system")
     source_ref: str = Field(..., min_length=1, max_length=255, description="Source reference ID")
+    external_link: Optional[str] = Field(None, max_length=1000, description="Link to source system")
     severity: Severity = Field(Severity.MEDIUM, description="Alert severity")
     tlp: TLP = Field(TLP.AMBER, description="Traffic Light Protocol level")
+    pap: TLP = Field(TLP.AMBER, description="Permissible Actions Protocol level")
+    date: datetime = Field(..., description="Alert occurrence date")
+    last_sync_date: datetime = Field(..., description="Last sync from source")
+    read: bool = Field(False, description="Has been read")
+    follow: bool = Field(False, description="Follow for updates")
+    tags: List[str] = Field(default_factory=list, description="Alert tags")
     raw_data: Optional[Dict[str, Any]] = Field(default_factory=dict, description="Raw alert data")
     observables: Optional[List[AlertObservable]] = Field(default_factory=list, description="Embedded observables")
 
@@ -61,11 +69,19 @@ class AlertCreate(AlertBase):
 
 class AlertUpdate(BaseModel):
     """Schema for updating an alert"""
+    type: Optional[str] = Field(None, min_length=1, max_length=100)
     title: Optional[str] = Field(None, min_length=1, max_length=500)
     description: Optional[str] = None
+    external_link: Optional[str] = Field(None, max_length=1000)
     severity: Optional[Severity] = None
     tlp: Optional[TLP] = None
+    pap: Optional[TLP] = None
     status: Optional[AlertStatus] = None
+    date: Optional[datetime] = None
+    last_sync_date: Optional[datetime] = None
+    read: Optional[bool] = None
+    follow: Optional[bool] = None
+    tags: Optional[List[str]] = None
     raw_data: Optional[Dict[str, Any]] = None
     observables: Optional[List[AlertObservable]] = None
 
@@ -88,13 +104,21 @@ class AlertResponse(AlertBase):
         """Convert Alert model to API response using UUID"""
         return cls(
             id=alert.uuid,
+            type=alert.type,
             title=alert.title,
             description=alert.description,
             source=alert.source,
             source_ref=alert.source_ref,
+            external_link=alert.external_link,
             severity=alert.severity.value,
             tlp=alert.tlp.value,
+            pap=alert.pap.value,
             status=alert.status.value,
+            date=alert.date,
+            last_sync_date=alert.last_sync_date,
+            read=alert.read,
+            follow=alert.follow,
+            tags=alert.tags or [],
             raw_data=alert.raw_data or {},
             observables=[
                 AlertObservable(**obs) if isinstance(obs, dict) else obs 

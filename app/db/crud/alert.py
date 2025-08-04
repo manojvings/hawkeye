@@ -8,7 +8,8 @@ from uuid import UUID
 from datetime import datetime, timezone
 from loguru import logger
 
-from app.db.models import Alert, Case, User, Organization, AlertStatus, Severity
+from app.db.models import Alert, Case, User, Organization
+from app.db.models.enums import AlertStatus, Severity, TLP
 from app.api.v1.schemas.alerts import AlertCreate, AlertUpdate
 
 
@@ -125,13 +126,21 @@ async def create_alert(
 
         # Create alert
         alert = Alert(
+            type=alert_data.type,
             title=alert_data.title,
             description=alert_data.description,
             source=alert_data.source,
             source_ref=alert_data.source_ref,
+            external_link=alert_data.external_link,
             severity=alert_data.severity,
             tlp=alert_data.tlp,
+            pap=alert_data.pap,
             status=AlertStatus.NEW,
+            date=alert_data.date,
+            last_sync_date=alert_data.last_sync_date,
+            read=alert_data.read,
+            follow=alert_data.follow,
+            tags=alert_data.tags or [],
             raw_data=alert_data.raw_data or {},
             observables=alert_data.observables or [],
             organization_id=organization_id,

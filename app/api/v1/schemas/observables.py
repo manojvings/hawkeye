@@ -39,6 +39,8 @@ class ObservableBase(BaseModel):
     tags: Optional[List[str]] = Field(default_factory=list, description="Observable tags")
     source: Optional[str] = Field(None, max_length=255, description="Source of the observable")
     message: Optional[str] = Field(None, description="Additional message or context")
+    sighted: bool = Field(False, description="Has been observed in environment")
+    ignore_similarity: Optional[bool] = Field(None, description="Skip similarity detection")
 
     @validator('data')
     def validate_data(cls, v):
@@ -68,6 +70,8 @@ class ObservableUpdate(BaseModel):
     tags: Optional[List[str]] = None
     source: Optional[str] = Field(None, max_length=255)
     message: Optional[str] = None
+    sighted: Optional[bool] = None
+    ignore_similarity: Optional[bool] = None
 
     @validator('data')
     def validate_data(cls, v):
@@ -109,6 +113,8 @@ class ObservableResponse(ObservableBase):
             tags=observable.tags or [],
             source=observable.source,
             message=observable.message,
+            sighted=observable.sighted,
+            ignore_similarity=observable.ignore_similarity,
             case_id=observable.case.uuid if observable.case else None,
             case_title=observable.case.title if observable.case else None,
             case_number=observable.case.case_number if observable.case else None,

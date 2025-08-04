@@ -8,7 +8,8 @@ from uuid import UUID
 from datetime import datetime, timezone
 from loguru import logger
 
-from app.db.models import Case, Organization, User, CaseStatus, Severity, TLP, Task, Observable
+from app.db.models import Case, Organization, User, Task, Observable
+from app.db.models.enums import CaseStatus, Severity, TLP, ResolutionStatus, ImpactStatus
 from app.api.v1.schemas.cases import CaseCreate, CaseUpdate
 from app.core.case_utils import CaseNumberGenerator, CaseStatusTransition
 
@@ -153,6 +154,10 @@ async def create_case(
             tags=case_data.tags or [],
             custom_fields=case_data.custom_fields or {},
             due_date=case_data.due_date,
+            summary=case_data.summary,
+            impact_status=case_data.impact_status,
+            resolution_status=case_data.resolution_status,
+            case_template=case_data.case_template,
             organization_id=organization_id,
             created_by_id=creator_id,
             assignee_id=assignee_id
@@ -192,10 +197,10 @@ async def update_case(
                     f"Invalid status transition from {case.status.value} to {new_status.value}"
                 )
 
-            # Set closed_at timestamp if closing
-            if new_status == CaseStatus.CLOSED and case.status != CaseStatus.CLOSED:
+            # Set closed_at timestamp if resolving/duplicating
+            if new_status in [CaseStatus.RESOLVED, CaseStatus.DUPLICATED] and case.status == CaseStatus.OPEN:
                 case.closed_at = datetime.now(timezone.utc)
-            elif new_status != CaseStatus.CLOSED and case.status == CaseStatus.CLOSED:
+            elif new_status == CaseStatus.OPEN and case.status in [CaseStatus.RESOLVED, CaseStatus.DUPLICATED]:
                 case.closed_at = None
 
         # Handle assignee by email

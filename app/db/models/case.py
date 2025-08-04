@@ -4,7 +4,7 @@ from sqlalchemy import Column, Integer, String, Text, JSON, ForeignKey, Index, E
 from sqlalchemy.orm import relationship
 
 from app.db.models.base import Base, TimestampMixin, UUIDMixin
-from app.db.models.enums import Severity, TLP, CaseStatus
+from app.db.models.enums import Severity, TLP, CaseStatus, ResolutionStatus, ImpactStatus
 
 
 class Case(Base, UUIDMixin, TimestampMixin):
@@ -22,6 +22,12 @@ class Case(Base, UUIDMixin, TimestampMixin):
     custom_fields = Column(JSON, default=dict, nullable=False)
     due_date = Column(DateTime(timezone=True), nullable=True)
     closed_at = Column(DateTime(timezone=True), nullable=True)
+    
+    # New fields matching TheHive 4.1.24
+    summary = Column(Text, nullable=True)  # Case closure summary
+    impact_status = Column(Enum(ImpactStatus), nullable=True)  # Impact assessment
+    resolution_status = Column(Enum(ResolutionStatus), nullable=True)  # Resolution classification
+    case_template = Column(String(100), nullable=True)  # Template used for case creation
 
     # Foreign keys
     organization_id = Column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False)

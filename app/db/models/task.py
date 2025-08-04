@@ -14,10 +14,13 @@ class Task(Base, UUIDMixin, TimestampMixin):
     # Task fields
     title = Column(String(500), nullable=False)
     description = Column(Text, nullable=True)
-    status = Column(Enum(TaskStatus), nullable=False, default=TaskStatus.PENDING, index=True)
+    status = Column(Enum(TaskStatus), nullable=False, default=TaskStatus.WAITING, index=True)
     order_index = Column(Integer, nullable=False, default=0)
     due_date = Column(DateTime(timezone=True), nullable=True)
     completed_at = Column(DateTime(timezone=True), nullable=True)
+    
+    # New field matching TheHive 4.1.24
+    group = Column(String(100), nullable=False, default="default")  # Task grouping
 
     # Foreign keys
     case_id = Column(Integer, ForeignKey("cases.id", ondelete="CASCADE"), nullable=False)

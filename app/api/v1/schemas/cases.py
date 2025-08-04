@@ -21,10 +21,23 @@ class TLP(str, Enum):
 
 
 class CaseStatus(str, Enum):
-    OPEN = "open"
-    IN_PROGRESS = "in_progress"
-    RESOLVED = "resolved"
-    CLOSED = "closed"
+    OPEN = "Open"
+    RESOLVED = "Resolved"
+    DUPLICATED = "Duplicated"
+
+
+class ResolutionStatus(str, Enum):
+    INDETERMINATE = "Indeterminate"
+    FALSE_POSITIVE = "FalsePositive"
+    TRUE_POSITIVE = "TruePositive"
+    OTHER = "Other"
+    DUPLICATED = "Duplicated"
+
+
+class ImpactStatus(str, Enum):
+    NO_IMPACT = "NoImpact"
+    WITH_IMPACT = "WithImpact"
+    NOT_APPLICABLE = "NotApplicable"
 
 
 class CaseBase(BaseModel):
@@ -36,6 +49,10 @@ class CaseBase(BaseModel):
     tags: List[str] = Field(default_factory=list, description="Case tags")
     custom_fields: Dict[str, Any] = Field(default_factory=dict, description="Custom fields")
     due_date: Optional[datetime] = Field(None, description="Due date for the case")
+    summary: Optional[str] = Field(None, description="Case closure summary")
+    impact_status: Optional[ImpactStatus] = Field(None, description="Case impact assessment")
+    resolution_status: Optional[ResolutionStatus] = Field(None, description="Case resolution classification")
+    case_template: Optional[str] = Field(None, max_length=100, description="Template used for case creation")
 
 
 class CaseCreate(CaseBase):
@@ -54,6 +71,10 @@ class CaseUpdate(BaseModel):
     custom_fields: Optional[Dict[str, Any]] = None
     due_date: Optional[datetime] = None
     assignee_email: Optional[str] = Field(None, description="Email of user to assign (null to unassign)")
+    summary: Optional[str] = None
+    impact_status: Optional[ImpactStatus] = None
+    resolution_status: Optional[ResolutionStatus] = None
+    case_template: Optional[str] = Field(None, max_length=100)
 
 
 class CaseResponse(CaseBase):
@@ -86,6 +107,10 @@ class CaseResponse(CaseBase):
             tags=case.tags or [],
             custom_fields=case.custom_fields or {},
             due_date=case.due_date,
+            summary=case.summary,
+            impact_status=case.impact_status.value if case.impact_status else None,
+            resolution_status=case.resolution_status.value if case.resolution_status else None,
+            case_template=case.case_template,
             organization_id=case.organization.uuid,
             assignee_id=case.assignee.uuid if case.assignee else None,
             assignee_email=case.assignee.email if case.assignee else None,

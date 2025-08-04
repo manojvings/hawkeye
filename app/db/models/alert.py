@@ -1,6 +1,6 @@
 # app/db/models/alert.py
 """Alert management model"""
-from sqlalchemy import Column, Integer, String, Text, JSON, ForeignKey, Index, Enum, DateTime
+from sqlalchemy import Column, Integer, String, Text, Boolean, JSON, ForeignKey, Index, Enum, DateTime
 from sqlalchemy.orm import relationship
 
 from app.db.models.base import Base, TimestampMixin, UUIDMixin
@@ -12,13 +12,21 @@ class Alert(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "alerts"
 
     # Alert fields
+    type = Column(String(100), nullable=False, index=True)  # Alert type
     title = Column(String(500), nullable=False)
     description = Column(Text, nullable=True)
     source = Column(String(255), nullable=False, index=True)
     source_ref = Column(String(255), nullable=False)  # Reference in source system
+    external_link = Column(String(1000), nullable=True)  # Link to source system
     severity = Column(Enum(Severity), nullable=False, default=Severity.MEDIUM)
     tlp = Column(Enum(TLP), nullable=False, default=TLP.AMBER)
+    pap = Column(Enum(TLP), nullable=False, default=TLP.AMBER)  # PAP uses same levels as TLP
     status = Column(Enum(AlertStatus), nullable=False, default=AlertStatus.NEW, index=True)
+    date = Column(DateTime(timezone=True), nullable=False)  # Alert occurrence date
+    last_sync_date = Column(DateTime(timezone=True), nullable=False)  # Last sync from source
+    read = Column(Boolean, default=False, nullable=False, index=True)  # Has been read
+    follow = Column(Boolean, default=False, nullable=False, index=True)  # Follow for updates
+    tags = Column(JSON, default=list, nullable=False)  # Alert tags
     raw_data = Column(JSON, default=dict, nullable=False)
     observables = Column(JSON, default=list, nullable=False)  # Embedded observables
     imported_at = Column(DateTime(timezone=True), nullable=True)  # When converted to case

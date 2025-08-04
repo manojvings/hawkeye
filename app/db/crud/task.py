@@ -8,7 +8,8 @@ from uuid import UUID
 from datetime import datetime, timezone
 from loguru import logger
 
-from app.db.models import Task, Case, User, TaskStatus
+from app.db.models import Task, Case, User
+from app.db.models.enums import TaskStatus
 from app.api.v1.schemas.tasks import TaskCreate, TaskUpdate
 
 
@@ -92,9 +93,10 @@ async def create_task(
         task = Task(
             title=task_data.title,
             description=task_data.description,
-            status=TaskStatus.PENDING,
+            status=TaskStatus.WAITING,
             order_index=task_data.order_index if task_data.order_index is not None else next_order,
             due_date=task_data.due_date,
+            group=task_data.group,
             case_id=case_id,
             created_by_id=creator_id,
             assignee_id=assignee_id

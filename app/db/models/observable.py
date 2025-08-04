@@ -2,6 +2,7 @@
 """Observable (IOC/Artifact) model"""
 from sqlalchemy import Column, Integer, String, Text, Boolean, JSON, ForeignKey, Index, Enum
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.db.models.base import Base, TimestampMixin, UUIDMixin
 from app.db.models.enums import ObservableType, TLP
@@ -20,6 +21,11 @@ class Observable(Base, UUIDMixin, TimestampMixin):
     source = Column(String(255), nullable=True)
     message = Column(Text, nullable=True)
     sighted_count = Column(Integer, default=0, nullable=False)
+    
+    # New fields matching TheHive 4.1.24
+    sighted = Column(Boolean, default=False, nullable=False, index=True)  # Has been observed in environment
+    ignore_similarity = Column(Boolean, nullable=True)  # Skip similarity detection
+    attachment_id = Column(UUID(as_uuid=True), nullable=True)  # File attachment reference (future)
 
     # Foreign keys
     case_id = Column(Integer, ForeignKey("cases.id", ondelete="CASCADE"), nullable=True)
