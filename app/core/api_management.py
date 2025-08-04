@@ -17,23 +17,8 @@ import secrets
 from app.db.database import get_db, Base
 from app.core import tracing
 from app.core.config import settings
-
-
-# API Key Model
-class APIKey(Base):
-    """API Key model for service-to-service authentication"""
-    __tablename__ = "api_keys"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(255), nullable=False)
-    key_hash = Column(String(255), unique=True, nullable=False, index=True)
-    is_active = Column(Boolean, default=True, nullable=False)
-    permissions = Column(JSON, default=list)
-    rate_limit_override = Column(Integer, nullable=True)  # Custom rate limit
-    created_at = Column(DateTime(timezone=True), server_default='CURRENT_TIMESTAMP')
-    last_used_at = Column(DateTime(timezone=True), nullable=True)
-    expires_at = Column(DateTime(timezone=True), nullable=True)
-
+from sqlalchemy.dialects.postgresql import UUID
+import uuid
 
 # Global rate limiter instance
 rate_limiter = Limiter(
