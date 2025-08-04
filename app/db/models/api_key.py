@@ -1,16 +1,16 @@
-import uuid
+# In app/db/models/api_key.py, update the model to add UUID:
+
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON
 from sqlalchemy.dialects.postgresql import UUID
-
-from app.db.models.base import Base
-
+import uuid
+from app.db.database import Base
 
 class APIKey(Base):
     """API Key model for service-to-service authentication"""
     __tablename__ = "api_keys"
 
     id = Column(Integer, primary_key=True, index=True)
-    uuid = Column(UUID(as_uuid=True), unique=True, default=uuid.uuid4, index=True, nullable=False)  # ADD THIS LINE
+    uuid = Column(UUID(as_uuid=True), unique=True, default=uuid.uuid4, index=True, nullable=False)  # ADD THIS
     name = Column(String(255), nullable=False)
     key_hash = Column(String(255), unique=True, nullable=False, index=True)
     is_active = Column(Boolean, default=True, nullable=False)
